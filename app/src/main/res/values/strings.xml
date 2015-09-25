@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BuildProp Enhancer</string>
+    <string name="xposeddescription">build.prop default.prop editor, enable ViewServer to use hierarchyviewer, make all application android:debuggable="true"</string>
+    <string name="enable_view_server_title">Enable ViewServer</string>
+    <string name="enable_view_server_summary">The hierarchyviewer tool require ViewServer. set ro.secure=0</string>
+    <string name="enable_debug_title">Turn On/Off Debug</string>
+    <string name="enable_debug_summary">Output debug log to logcat</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="default_value">Default</string>
+    <string name="support">Support</string>
+    <string-array name="pref_bool_list_titles">
+        <item>@string/default_value</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="pref_bool_list_values">
+        <item>-1</item>
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+
+</resources>

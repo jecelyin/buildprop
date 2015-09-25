@@ -1,0 +1,45 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="enable_view_server"
+        android:title="@string/enable_view_server_title"
+        android:summary="@string/enable_view_server_summary"
+        android:defaultValue="false" />
+
+    <ListPreference
+        android:key="ro.debuggable"
+        android:title="ro.debuggable"
+        android:summary="@string/default_value"
+        android:defaultValue="-1"
+        android:entries="@array/pref_bool_list_titles"
+        android:entryValues="@array/pref_bool_list_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <ListPreference
+        android:key="ro.secure"
+        android:title="ro.secure"
+        android:defaultValue="-1"
+        android:summary="@string/default_value"
+        android:entries="@array/pref_bool_list_titles"
+        android:entryValues="@array/pref_bool_list_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <CheckBoxPreference
+        android:key="enable_debug"
+        android:title="@string/enable_debug_title"
+        android:summary="@string/enable_debug_summary"
+        android:defaultValue="true" />
+
+    <Preference
+        android:title="@string/support"
+        android:key="support">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://github.com/jecelyin/buildprop"
+            />
+
+    </Preference>
+</PreferenceScreen>
