@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+Properties properties = new Properties()
+properties.load(file('../../keystore/buildprop.properties').newDataInputStream())
+def KEYSTORE_ALIAS = properties.getProperty('KEYSTORE_ALIAS')
+def KEYSTORE_PASSWORD = properties.getProperty('KEYSTORE_PASSWORD')
 
 android {
     compileSdkVersion 23
@@ -12,13 +16,40 @@ android {
         versionCode 2
         versionName "1.1"
     }
-    buildTypes {
+
+    signingConfigs {
+        debug {
+            keyAlias KEYSTORE_ALIAS
+            keyPassword KEYSTORE_PASSWORD
+            storeFile file('../../keystore/buildprop.keystore.jks')
+            storePassword KEYSTORE_PASSWORD
+        }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            keyAlias KEYSTORE_ALIAS
+            keyPassword KEYSTORE_PASSWORD
+            storeFile file('../../keystore/buildprop.keystore.jks')
+            storePassword KEYSTORE_PASSWORD
         }
     }
 
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+    }
+    
     sourceSets { main { java.srcDirs = ['src/main/java'] } }
 }
 
