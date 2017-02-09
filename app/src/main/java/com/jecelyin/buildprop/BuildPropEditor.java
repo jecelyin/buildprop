@@ -1,7 +1,11 @@
 package com.jecelyin.buildprop;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.util.Log;
+import android.webkit.WebView;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
@@ -21,6 +25,7 @@ public class BuildPropEditor implements IXposedHookZygoteInit,
     public String roDebuggable;
     public Context mContext;
     private String roSecure;
+    private boolean enableDebugWebview;
     private boolean debug;
 
     @Override
@@ -31,6 +36,7 @@ public class BuildPropEditor implements IXposedHookZygoteInit,
         debug = prefs.getBoolean(Common.PREF_ENABLE_DEBUG, true);
         boolean enableViewServer = prefs.getBoolean(Common.PREF_ENABLE_VIEW_SERVER, false);
         roDebuggable = prefs.getString(Common.PREF_RO_DEBUGGABLE, "-1");
+        enableDebugWebview = prefs.getBoolean(Common.PREF_ENABLE_DEBUG_WEBVIEW, true);
 
         roSecure = prefs.getString(Common.PREF_RO_SECURE, "-1");
         if (enableViewServer)
@@ -42,18 +48,11 @@ public class BuildPropEditor implements IXposedHookZygoteInit,
     @Override
     public void handleLoadPackage(final LoadPackageParam lpparam)
             throws Throwable {
-        if (debug)
+        if (debug) {
             XposedBridge.log("handleLoadPackage: " + lpparam.packageName + " lpparam.processName:" + lpparam.processName);
-//        if(lpparam.appInfo != null) {
-//            XposedBridge.log("flags="+lpparam.appInfo.flags+" ="+(lpparam.appInfo.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)));
-//        }
-//        if(lpparam.appInfo == null ||
-//                (lpparam.appInfo.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) !=0){
-//            //系统应用
-//        }
+        }
 
         if (Common.ANDROID_PKG.equals(lpparam.packageName) && Common.ANDROID_PKG.equals(lpparam.processName)) {
-
             if (!roDebuggable.equals("-1")) {
                 // 4.0 and newer
                 XposedBridge.hookAllMethods(android.os.Process.class, "start", new XC_MethodHook() {
@@ -77,21 +76,67 @@ public class BuildPropEditor implements IXposedHookZygoteInit,
                 });
             }
 
-
             if (!roSecure.equals("-1")) {
                 Class<?> wms = XposedHelpers.findClass("com.android.server.wm.WindowManagerService", lpparam.classLoader);
                 XposedHelpers.findAndHookMethod(wms, "isSystemSecure", XC_MethodReplacement.returnConstant(roSecure.equals("1")));
             }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && enableDebugWebview) {
+            // hook webview.loadUrl for all process to enable remote debug
+            XC_MethodHook enableRemoteDebug = new XC_MethodHook() {
+                @TargetApi(Build.VERSION_CODES.KITKAT)
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    WebView.setWebContentsDebuggingEnabled(true);
+                }
+            };
 
+            Object[] loadData = new Object[]{
+                    "java.lang.String",
+                    "java.lang.String",
+                    "java.lang.String",
+                    enableRemoteDebug
+            };
+
+            Object[] loadDataWithBaseURL = new Object[]{
+                    "java.lang.String",
+                    "java.lang.String",
+                    "java.lang.String",
+                    "java.lang.String",
+                    "java.lang.String",
+                    enableRemoteDebug
+            };
+
+            Object[] loadUrl = new Object[]{
+                    "java.lang.String",
+                    enableRemoteDebug
+            };
+
+            Object[] loadUrlWithHeaders = new Object[]{
+                    "java.lang.String",
+                    "java.util.Map",
+                    enableRemoteDebug
+            };
+
+
+            String webviewClzName = "android.webkit.WebView";
+            ClassLoader classLoader = lpparam.classLoader;
+
+            // since my device has an ancient version of xposed installed
+            try {
+                XposedHelpers.findAndHookMethod(webviewClzName, classLoader, "loadData", loadData);
+                XposedHelpers.findAndHookMethod(webviewClzName, classLoader, "loadDataWithBaseURL", loadDataWithBaseURL);
+                XposedHelpers.findAndHookMethod(webviewClzName, classLoader, "loadUrl", loadUrl);
+                XposedHelpers.findAndHookMethod(webviewClzName, classLoader, "loadUrl", loadUrlWithHeaders);
+            } catch (Throwable e) {
+                XposedBridge.log("webviewenabled:: err -> " + Log.getStackTraceString(e));
+            }
         }
-
-
     }
 
     public void reloadPreferences() {
         prefs.reload();
     }
-
 
     public Context getCurrentPackageContext() {
         Context context = null;

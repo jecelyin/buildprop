@@ -8,6 +8,7 @@ public class Common {
     public static final String PREF_RO_SECURE = "ro.secure";
     public static final String PREF_ENABLE_VIEW_SERVER = "enable_view_server";
     public static final String PREF_ENABLE_DEBUG = "enable_debug";
+    public static final String PREF_ENABLE_DEBUG_WEBVIEW = "enable_debug_webview";
 
     public static final String PACKAGE_NAME = Common.class.getPackage().getName();
     public static final String PACKAGE_PREFERENCES = PACKAGE_NAME;
