@@ -13,6 +13,8 @@
 
     <string name="default_value">Default</string>
     <string name="support">Support</string>
+    <string name="enable_debug_webview_summary">Allow remote debug Webview</string>
+    <string name="enable_debug_webview_title">Turn On/Off Webview debug</string>
     <string-array name="pref_bool_list_titles">
         <item>@string/default_value</item>
         <item>1</item>

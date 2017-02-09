@@ -1,45 +1,50 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <CheckBoxPreference
+        android:defaultValue="false"
         android:key="enable_view_server"
-        android:title="@string/enable_view_server_title"
         android:summary="@string/enable_view_server_summary"
-        android:defaultValue="false" />
+        android:title="@string/enable_view_server_title" />
 
     <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/pref_bool_list_titles"
+        android:entryValues="@array/pref_bool_list_values"
         android:key="ro.debuggable"
-        android:title="ro.debuggable"
-        android:summary="@string/default_value"
-        android:defaultValue="-1"
-        android:entries="@array/pref_bool_list_titles"
-        android:entryValues="@array/pref_bool_list_values"
         android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
+        android:positiveButtonText="@null"
+        android:summary="@string/default_value"
+        android:title="ro.debuggable" />
 
     <ListPreference
-        android:key="ro.secure"
-        android:title="ro.secure"
         android:defaultValue="-1"
-        android:summary="@string/default_value"
         android:entries="@array/pref_bool_list_titles"
         android:entryValues="@array/pref_bool_list_values"
+        android:key="ro.secure"
         android:negativeButtonText="@null"
-        android:positiveButtonText="@null" />
+        android:positiveButtonText="@null"
+        android:summary="@string/default_value"
+        android:title="ro.secure" />
 
     <CheckBoxPreference
+        android:defaultValue="true"
         android:key="enable_debug"
-        android:title="@string/enable_debug_title"
         android:summary="@string/enable_debug_summary"
-        android:defaultValue="true" />
+        android:title="@string/enable_debug_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="enable_debug_webview"
+        android:summary="@string/enable_debug_webview_summary"
+        android:title="@string/enable_debug_webview_title" />
 
     <Preference
-        android:title="@string/support"
-        android:key="support">
+        android:key="support"
+        android:title="@string/support">
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="https://github.com/jecelyin/buildprop"
-            />
+            android:data="https://github.com/jecelyin/buildprop" />
 
     </Preference>
 </PreferenceScreen>
